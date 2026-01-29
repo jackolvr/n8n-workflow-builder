@@ -4,14 +4,14 @@ WORKDIR /app
 # Copiar package files
 COPY package*.json ./
 
-# Instalar dependências
-RUN npm install
+# Instalar dependências SEM rodar scripts (evita erro do rename)
+RUN npm install --ignore-scripts
 
 # Copiar código fonte
 COPY . .
 
-# Build (vai funcionar no Alpine sem problemas)
-RUN npm run build
+# Build APENAS TypeScript (sem rename)
+RUN npx tsc
 
 # MCP roda via stdio, não precisa EXPOSE
 CMD ["node", "build/index.js"]
