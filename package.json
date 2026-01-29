@@ -4,7 +4,6 @@
   "description": "Model Context Protocol server for n8n workflow management",
   "main": "build/server.cjs",
   "module": "./src/index.ts",
-  "type": "module",
   "exports": {
     ".": {
       "import": "./src/index.ts",
