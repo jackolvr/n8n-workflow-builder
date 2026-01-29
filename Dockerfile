@@ -20,4 +20,8 @@ RUN find build -type f -name "*.js" | while read file; do \
     done
 
 # MCP roda via stdio
-CMD ["node", "build/server.cjs"]
+#CMD ["node", "build/server.cjs"]
+
+#Isso mantém o container ativo sem consumir CPU
+CMD ["tail", "-f", "/dev/null"]
+
