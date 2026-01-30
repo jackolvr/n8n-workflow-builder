@@ -1,27 +1,26 @@
 FROM node:22-alpine
+
+# Instalar tini (init system leve)
+RUN apk add --no-cache tini
+
 WORKDIR /app
 
-# Copiar arquivos de configuração
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Instalar dependências SEM scripts (evita erro do rename)
 RUN npm install --ignore-scripts
 
-# Copiar código fonte
 COPY . .
 
-# Build apenas TypeScript
 RUN npx tsc
 
-# Renomear manualmente .js para .cjs (compatível Alpine)
-RUN find build -type f -name "*.js" | while read file; do \
-    mv "$file" "${file%.js}.cjs"; \
+# Rename .js -> .cjs
+RUN for file in build/*.js; do \
+    [ -f "$file" ] && mv "$file" "${file%.js}.cjs"; \
     done
 
-# MCP roda via stdio
-#CMD ["node", "build/server.cjs"]
+# Usar tini como entrypoint (gerencia sinais e processos órfãos)
+ENTRYPOINT ["/sbin/tini", "--"]
 
-#Isso mantém o container ativo sem consumir CPU
+# Manter container vivo
 CMD ["tail", "-f", "/dev/null"]
-
